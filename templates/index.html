@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css">
+    <link rel="stylesheet" href="../static/websitestyle.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luke's Website - Home</title>
+    <style>
+      body,header{
+        background: lightslategrey;
+      }
+      .projects{
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-auto-rows: 100px 1fr;
+      }
+      .myProjects{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        /* grid-template-rows: 1fr 1fr; */
+        grid-area: 2/1/3/3;
+        gap: 3px;
+        margin-left: 0.5%;
+      }
+      .myProjects img{
+        width: 620px;
+        height: 500px;
+        border-radius: 10px;
+        box-shadow: 3px 3px 3px 3px black,-3px -3px 3px 3px;
+      }
+      .myProjects img:hover{
+        box-shadow: none;
+      }
+      .myProjects a{
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+      }
+      .myProjects a h3{
+        text-align: center;
+        color: rgb(255, 255, 255);
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        padding: 10px;
+      }
+    </style>
+</head>
+<body>
+    <div class="projects">
+      <header>
+        <ul>
+          <li><a href="./index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="./myprojects.html"><i class="fas fa-child"></i> My Projects</a></li>
+        </ul>
+      </header>
+      <div class = "myProjects">
+        <div> 
+          <a href="/biggest_number"><img src="../static/numbers.png" alt="numbers.png">
+          <h3>Biggest Number Among 3 Numbers</h3></a>
+        </div> 
+        <div>
+          <a href="/courier "><img src="../static/Courier.jpg" alt="courier.jpg">
+          <h3>Courier Shop</h3></a>
+        </div>
+        <div>
+          <a href="/bmi"><img src="../static/BMI.jpg" alt="BMI.jpg">
+          <h3>BMI Calculator</h3></a>
+        </div>
+        <div>
+          <a href="/leap_year"><img src="../static/LeapYear.jpg" alt="leapYear.jpg">
+          <h3>Check if it is a Leap Year</h3></a>
+        </div>
+        <div>
+          <a href="/encrypt"><img src="../static/encrypt.jpg" alt="encrypt.jpg">
+          <h3>Encrypt a Message</h3></a>
+        </div>
+        <div>
+          <a href="/decrypt"><img src="../static/decrypt.jpg" alt="decrypt.jpg  ">
+          <h3>Decrypt a Message</h3></a>
+        </div>
+      </div>
+    </div>
+</body>
+</html>

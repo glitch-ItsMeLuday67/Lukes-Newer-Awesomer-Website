@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/websitestyle.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Even_odd checker</title>
+    <style>
+        form h4{
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <form action="/validate_even_odd">
+        <h4>Enter a number: </h4><br>
+        <input type="text" name="number" id="" placeholder="Enter a number"><br>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+    {{message}}
+</body>
+</html>
