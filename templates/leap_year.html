@@ -5,11 +5,43 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leap Year - By Luke</title>
+    <style>
+        form h2{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        form{
+            margin-left: 32%;
+            padding-right: 10px;
+            padding-top: 10px;
+            padding-left: 10px;
+            margin-right: 30%;
+            border: solid thin;
+            background: rgb(231, 231, 231);
+            border-radius: 10px;
+        }
+        form input{
+            border-width: 2px;
+            border-radius: 5px;
+            border-color: lightsteelblue;
+            height: 50px;
+            font-size: 20px;
+        }
+        form input:focus{
+            border: skyblue;
+        }
+        form button{
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            background: lightskyblue;
+            border: solid thin;
+            border-radius: 5px;
+            
+        }
+    </style>
 </head>
 <body>
     <form action="/leap_year" method="post">
         <h2>Enter any year to check if it is a leap year or not:</h2>
-        <input type="number" name="year" min="1">
+        <input type="number" name="year" min="1"> <br> <br>
         <button type="submit">Submit</button>
         <h2>{{result}}</h2>
     </form>

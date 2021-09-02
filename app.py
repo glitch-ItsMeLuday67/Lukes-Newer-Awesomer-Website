@@ -159,5 +159,43 @@ def decrypt():
         decrypt += eye1
 
     return render_template("encrypt_decrypt.html", decrypt = decrypt)
+
+users = ["test1", "test2", "test3"]
+user_password = ["test1", "test2", "test3"]
+user_email = ["test1@test.com", "test2@test.com", "test3@test.com"]
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == "GET":
+        return render_template("register.html")
+    
+    username = request.form.get("username")
+    password = request.form.get("password")
+    confirmpass = request.form.get("cpassword")
+    email = request.form.get("email")
+    message = ""
+
+    if username in users:
+        message = "Username already exists. Please choose another one."
+        return render_template("register.html", message = message)
+
+    if email in user_email:
+        message = "Email already exists. Please choose another one."
+        return render_template("register.html", message = message)
+
+    if confirmpass != password:
+        message = "Password mismatch."
+        return render_template("register.html", message = message)
+
+    if email not in user_email and username not in users:
+        message = "You have successfully registered."
+        users.append(username)
+        user_password.append(password)
+        user_email.append(email)
+        print(users)
+        print(user_password)
+        print(user_email)
+        return render_template("register.html", message = message)
+
 if __name__ == "__main__":
     app.run(debug=True)
