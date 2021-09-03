@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        *{
+            padding: 0%;
+            margin: 0%;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(320deg, #71b7e6, #9b59b6);
+            background-repeat: no-repeat;
+            padding-left: 35%;
+            padding-top: 20%;
+            height: 100vh;
+        }
+        form{
+            display: grid;
+            grid-template-columns: auto auto;
+            background-color: skyblue;
+            padding: 20px;
+            line-height: 30px;
+            width: 50%;
+            gap: 1rem;
+        }
+        div:last-child{
+            grid-column: span 2;
+        }
+        form button{
+            width: 80%;
+        }
+        header h1{
+            text-align: center;
+        }
+        header{
+            grid-column: span 2;
+        }
+        form input{
+            padding: 10px;
+            border: solid rgb(206, 206, 206) thin;
+            border-radius: 5px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form action="/login" method="POST" msg = "">
+        <h3>Username:</h3>
+        <input type="text" name="username" placeholder="Enter Your Username">
+        <h3>Password:</h3>
+        <input type="password" name="password" placeholder="Enter Your Password">
+        <button type="submit">Login</button>
+        <label class="msg">{{msg}}</label>
+    </form>
+</body>
+</html>

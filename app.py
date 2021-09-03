@@ -160,9 +160,9 @@ def decrypt():
 
     return render_template("encrypt_decrypt.html", decrypt = decrypt)
 
-users = ["test1", "test2", "test3"]
-user_password = ["test1", "test2", "test3"]
-user_email = ["test1@test.com", "test2@test.com", "test3@test.com"]
+users = []
+user_password = []
+user_email = []
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -173,7 +173,7 @@ def register():
     password = request.form.get("password")
     confirmpass = request.form.get("cpassword")
     email = request.form.get("email")
-    message = ""
+    me = ""
 
     if username in users:
         message = "Username already exists. Please choose another one."
@@ -196,6 +196,23 @@ def register():
         print(user_password)
         print(user_email)
         return render_template("register.html", message = message)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+
+    username = request.form.get("username")
+    password = request.form.get("password")
+    msg = ""
+
+    if username not in users or password not in user_password:
+        if username == "" and password == "":
+            msg = ""
+        else:
+            msg = "Invalid username or password"
+        return render_template("login.html", msg = msg)
+    elif username in users and password in user_password:
+        msg = "You have successfully registered!"
+        return render_template("login.html", msg = msg)
 
 if __name__ == "__main__":
     app.run(debug=True)
