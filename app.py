@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 app = Flask(__name__)
+
+app.config["SECRET_KEY"] = "encrypted_data"
 
 @app.route("/")
 def index():
@@ -160,26 +162,33 @@ def decrypt():
 
     return render_template("encrypt_decrypt.html", decrypt = decrypt)
 
-users = []
-user_password = []
-user_email = []
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == "GET":
         return render_template("register.html")
+
+    global users, user_password, user_email
+
+    users = ['1']
+    user_password = ['2']
+    user_email = ['3']
     
     username = request.form.get("username")
+    print(username)
+    session["username"] = username
     password = request.form.get("password")
+    print(password)
+    session["password"] = password
     confirmpass = request.form.get("cpassword")
     email = request.form.get("email")
-    me = ""
+    session["email"] = email
+    message = ""
 
-    if username in users:
+    if username in users and users != []:
         message = "Username already exists. Please choose another one."
         return render_template("register.html", message = message)
 
-    if email in user_email:
+    if email in user_email and user_email != []:
         message = "Email already exists. Please choose another one."
         return render_template("register.html", message = message)
 
@@ -196,23 +205,28 @@ def register():
         print(user_password)
         print(user_email)
         return render_template("register.html", message = message)
-
+        
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
+    if request.method=="GET":
+        return render_template("login.html")
+
     username = request.form.get("username")
     password = request.form.get("password")
-    msg = ""
+    message_login = ""
 
     if username not in users or password not in user_password:
-        if username == "" and password == "":
-            msg = ""
-        else:
-            msg = "Invalid username or password"
-        return render_template("login.html", msg = msg)
+        message_login = "Invalid username or password"
+        return render_template("login.html", msg = message_login)
+
     elif username in users and password in user_password:
-        msg = "You have successfully registered!"
-        return render_template("login.html", msg = msg)
+        message_login = "You have successfully registered!"
+        return render_template("login.html", msg = message_login)
+
+@app.route('/users', methods=['GET', 'POST'])
+def users():
+    return render_template("users.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -46,10 +46,40 @@
             border-radius: 5px;
             height: 20px;
         }
+        header ul{
+            list-style-type: none;
+            display:flex;
+            justify-content: space-around;
+            font-size: 20px;
+            font-family: sans-serif;
+            font-weight: bolder;
+            position: fixed;
+            width: 100%;
+            padding: 20px;
+            top: 0;
+            background-color: lightslategray;
+            margin: 0;
+        }
+        header a{
+            text-decoration: none;
+            color:black;
+            transition: 0.3s;
+        }
+        header a:hover{
+            font-size: 50px;
+            transition: 0.3s;
+        }
     </style>
 </head>
 <body>
-    <form action="/login" method="POST" msg = "">
+    <header>
+        <ul>
+            <li><a href="/index" class="active"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/register"> Register</a></li>
+            <li><a href="/login"> Login</a></li>
+        </ul>
+    </header>
+    <form action="/login" method="POST">
         <h3>Username:</h3>
         <input type="text" name="username" placeholder="Enter Your Username">
         <h3>Password:</h3>
