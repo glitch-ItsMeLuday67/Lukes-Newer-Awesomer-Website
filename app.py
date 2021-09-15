@@ -1,4 +1,6 @@
+from os import error
 from flask import Flask, render_template, request, session
+import sqlite3
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "encrypted_data"
@@ -166,45 +168,44 @@ def decrypt():
 def register():
     if request.method == "GET":
         return render_template("register.html")
-
-    global users, user_password, user_email
-
-    users = ['1']
-    user_password = ['2']
-    user_email = ['3']
     
     username = request.form.get("username")
-    print(username)
     session["username"] = username
     password = request.form.get("password")
-    print(password)
     session["password"] = password
     confirmpass = request.form.get("cpassword")
     email = request.form.get("email")
     session["email"] = email
     message = ""
 
-    if username in users and users != []:
-        message = "Username already exists. Please choose another one."
-        return render_template("register.html", message = message)
-
-    if email in user_email and user_email != []:
-        message = "Email already exists. Please choose another one."
-        return render_template("register.html", message = message)
+    conn = sqlite3.connect('students.db')
+    cur = conn.cursor()
+    usernames = cur.execute("SELECT Username FROM registration_db").fetchall()
+    print(usernames)
+    users = []
+    for i in usernames:
+        users.append(i[0])
+    print(users)
+    if username in users:
+        error = "Username already exists."
+        return render_template("register.html", error = error)
 
     if confirmpass != password:
         message = "Password mismatch."
         return render_template("register.html", message = message)
+    
+    conn = sqlite3.connect('students.db')
+    cur = conn.cursor()
+    cur.execute('''INSERT INTO registration_db(
+        Username, Password, Email) VALUES(?,?,?)''',(username, password, email))
+    print("Values Inserted")
+    records1 = cur.execute("SELECT * FROM registration_db;").fetchall()
+    session["records"] = records1
+    print(records1)
+    conn.commit()
+    conn.close()
 
-    if email not in user_email and username not in users:
-        message = "You have successfully registered."
-        users.append(username)
-        user_password.append(password)
-        user_email.append(email)
-        print(users)
-        print(user_password)
-        print(user_email)
-        return render_template("register.html", message = message)
+    return render_template("login.html", records = records1)
         
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -212,21 +213,56 @@ def login():
     if request.method=="GET":
         return render_template("login.html")
 
+    user_admin = "admin"
+    pass_admin = "lukeanand123$"
     username = request.form.get("username")
     password = request.form.get("password")
     message_login = ""
+    db_username = session.get("username", "Incorrect username or password")
+    db_password = session.get("password", "Incorrect username or password")
+    role = request.form.get("role")
 
-    if username not in users or password not in user_password:
-        message_login = "Invalid username or password"
-        return render_template("login.html", msg = message_login)
-
-    elif username in users and password in user_password:
-        message_login = "You have successfully registered!"
-        return render_template("login.html", msg = message_login)
+    if role == "admin":
+        if username == user_admin:
+            if password == pass_admin:
+                message_login = "You have logged in as an admin"
+                session["admin"] = True
+                session["authenticated"] = True
+                return render_template("index.html", message_login = message_login)
+            message_login = "Username or password is incorrect."
+            return render_template("login.html", message_login = message_login)
+        message_login = "Username or password is incorrect."
+        return render_template("login.html", message_login = message_login)
+    
+    if username == db_username:
+        if password == db_password:
+            message_login = "Successfully Logged In"
+            session["authenticated"] = True
+            return render_template("index.html", message_login = message_login)
+        message_login = "Incorrect username or password"
+        return render_template("login.html", message_login = message_login)
+    message_login = "Incorrect username or password"
+    return render_template("login.html", message_login = message_login)
 
 @app.route('/users', methods=['GET', 'POST'])
 def users():
-    return render_template("users.html")
+    conn = sqlite3.connect("students.db")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM registration_db")
+    records = cur.fetchall()
+    print(records)
+    conn.commit()
+    conn.close()
+    if session.get("admin"):
+        return render_template("user_table.html", records = records)
+    else:
+        return "You don't have the permission to access this page."
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.clear()
+    message = "You have successfully logged out"
+    return render_template("index.html", message_login = message)
 
 if __name__ == "__main__":
     app.run(debug=True)

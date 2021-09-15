@@ -53,9 +53,14 @@
         <ul>
           <li><a href="/index" class="active"><i class="fas fa-home"></i> Home</a></li>
           <li><a href="/register"> Register</a></li>
+          {%if session.get("authenticated")%}
+          <li><a href="/logout"> Logout</a></li>
+          {%else%}
           <li><a href="/login"> Login</a></li>
+          {%endif%}
         </ul>
       </header>
+      {{message_login}}
       {{session.get("username")}}
       <div class = "myProjects">
         <div> 

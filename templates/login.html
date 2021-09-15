@@ -74,7 +74,7 @@
 <body>
     <header>
         <ul>
-            <li><a href="/index" class="active"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/" class="active"><i class="fas fa-home"></i> Home</a></li>
             <li><a href="/register"> Register</a></li>
             <li><a href="/login"> Login</a></li>
         </ul>
@@ -84,8 +84,11 @@
         <input type="text" name="username" placeholder="Enter Your Username">
         <h3>Password:</h3>
         <input type="password" name="password" placeholder="Enter Your Password">
+        <h3>Choose your role:</h3>
+        <h4>Admin</h4><input type="radio" name="role" value="admin">
+        <h4>User</h4><input type="radio" name="role" value="user" checked>
         <button type="submit">Login</button>
-        <label class="msg">{{msg}}</label>
+        <label class="msg">{{message_login}}</label>
     </form>
 </body>
 </html>
