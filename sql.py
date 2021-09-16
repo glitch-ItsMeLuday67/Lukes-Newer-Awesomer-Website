@@ -12,7 +12,7 @@ records = cur.execute('SELECT Roll_No FROM Students_Record;').fetchall()
 #     (Username TEXT PRIMARY KEY,
 #     Password TEXT,
 #     Email TEXT);''')
-cur.execute("DROP TABLE registration_db")
+# cur.execute("DROP TABLE registration_db")
 print("Table deleted")
 for record in records:
     print(record[0])
