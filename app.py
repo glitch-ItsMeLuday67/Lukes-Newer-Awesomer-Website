@@ -180,10 +180,6 @@ def register():
 
     conn = sqlite3.connect('students.db')
     cur = conn.cursor()
-    cur.execute('''CREATE TABLE registration_db
-    (Username TEXT PRIMARY KEY,
-    Password TEXT,
-    Email TEXT);''')
     usernames = cur.execute("SELECT Username FROM registration_db").fetchall()
     print(usernames)
     users = []
