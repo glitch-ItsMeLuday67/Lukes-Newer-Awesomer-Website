@@ -1,94 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        *{
-            padding: 0%;
-            margin: 0%;
-            box-sizing: border-box;
-        }
-        body{
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(320deg, #71b7e6, #9b59b6);
-            background-repeat: no-repeat;
-            padding-left: 35%;
-            padding-top: 20%;
-            height: 100vh;
-        }
-        form{
-            display: grid;
-            grid-template-columns: auto auto;
-            background-color: skyblue;
-            padding: 20px;
-            line-height: 30px;
-            width: 50%;
-            gap: 1rem;
-        }
-        div:last-child{
-            grid-column: span 2;
-        }
-        form button{
-            width: 80%;
-        }
-        header h1{
-            text-align: center;
-        }
-        header{
-            grid-column: span 2;
-        }
-        form input{
-            padding: 10px;
-            border: solid rgb(206, 206, 206) thin;
-            border-radius: 5px;
-            height: 20px;
-        }
-        header ul{
-            list-style-type: none;
-            display:flex;
-            justify-content: space-around;
-            font-size: 20px;
-            font-family: sans-serif;
-            font-weight: bolder;
-            position: fixed;
-            width: 100%;
-            padding: 20px;
-            top: 0;
-            background-color: lightslategray;
-            margin: 0;
-        }
-        header a{
-            text-decoration: none;
-            color:black;
-            transition: 0.3s;
-        }
-        header a:hover{
-            font-size: 50px;
-            transition: 0.3s;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <ul>
-            <li><a href="/" class="active"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="/register"> Register</a></li>
-            <li><a href="/login"> Login</a></li>
-        </ul>
-    </header>
-    <form action="/login" method="POST">
-        <h3>Username:</h3>
-        <input type="text" name="username" placeholder="Enter Your Username">
-        <h3>Password:</h3>
-        <input type="password" name="password" placeholder="Enter Your Password">
-        <h3>Choose your role:</h3>
-        <h4>Admin</h4><input type="radio" name="role" value="admin">
-        <h4>User</h4><input type="radio" name="role" value="user" checked>
-        <button type="submit">Login</button>
-        <label class="msg">{{message_login}}</label>
-    </form>
-</body>
-</html>
+{%extends "layout.html"%}
+{%block content%}
+<form action="/login" class="row g-3 needs-validation" novalidate method="POST">
+    <div class="col-md-4">
+      <label for="validationCustom01" class="form-label">Username</label>
+      <input type="text" class="form-control" name="username" id="validationCustom01" required placeholder="Enter your Username">
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label for="validationCustom02" class="form-label">Password</label>
+      <input type="password" class="form-control" name="password" id="validationCustom02" required placeholder="Enter your Password">
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+    <h3>Choose your role: </h3>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="admin">
+        <label class="form-check-label" for="flexRadioDefault1">
+          Admin
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked value="user">
+        <label class="form-check-label" for="flexRadioDefault2">
+          User
+        </label>
+      </div>
+    <button type="submit" class="btn btn-primary" id="liveAlertBtn">Login</button>
+    
+{%endblock%}

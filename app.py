@@ -1,34 +1,13 @@
-from os import error
-from flask import Flask, render_template, request, session
+from flask import Flask, session, render_template, request, redirect, url_for
 import sqlite3
+
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "encrypted_data"
 
-@app.route("/")
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template("index.html") 
-
-
-@app.route("/city")
-def city():
-    return render_template("html.html")
-
-@app.route("/even_odd")
-def even_odd():
-    return render_template("even_odd.html")
-
-@app.route("/validate_even_odd")
-def validate_even_odd():
-    num = request.form.get("number")
-    if num.isdigit():
-        num = int(num)
-        if num % 2 == 0:
-            return render_template("even_odd.html", message = "It is even.")
-        elif num % 2 != 0:
-            return render_template("even_odd.html", message = "It is odd.")
-    else:
-        return render_template("even_odd.html", message = "It is not a number")
+    return render_template("index.html")
 
 @app.route("/biggest_number")
 def biggest_number():
@@ -97,28 +76,6 @@ def bmi():
     totalResult = resultBMI + ". " + resultFAT + ". " + resultH2O + ". " + resultHOW
     return render_template("bmi.html", totalResult = totalResult)
 
-
-@app.route('/courier', methods=['GET', 'POST'])
-def courier():
-    if request.method == "GET":
-        return render_template("courier_shop.html")
-    returnsentence = ""
-    parcelweight = request.form.get("parcelweight")
-    if not parcelweight.isnumeric():
-        return render_template("courier_shop.html",returnsentence = "Invalid Input")
-    parcelweight = float(parcelweight)
-    if parcelweight == 20:
-        returnsentence = "You have to pay %.2f"%(parcelweight*10) + "$"
-    elif parcelweight >= 10 and parcelweight < 20:
-        returnsentence = "You have to pay %.2f"%(parcelweight*12) + "$"
-    elif parcelweight >= 1 and parcelweight < 10:
-        returnsentence = "You have to pay %.2f"%(parcelweight*14) + "$"
-    elif parcelweight < 1:
-        returnsentence = "You don't have to pay anything"
-    else:
-        returnsentence = "We don't deliver parcels more than 20kg"
-    return render_template("courier_shop.html", returnsentence = returnsentence)
-
 @app.route('/leap_year', methods=['GET', 'POST'])
 def leap_year():
     if request.method == "GET":
@@ -178,7 +135,7 @@ def register():
     session["email"] = email
     message = ""
 
-    conn = sqlite3.connect('students.db')
+    conn = sqlite3.connect('users.db')
     cur = conn.cursor()
     usernames = cur.execute("SELECT Username FROM registration_db").fetchall()
     print(usernames)
@@ -194,7 +151,7 @@ def register():
         message = "Password mismatch."
         return render_template("register.html", message = message)
     
-    conn = sqlite3.connect('students.db')
+    conn = sqlite3.connect('users.db')
     cur = conn.cursor()
     cur.execute('''INSERT INTO registration_db(
         Username, Password, Email) VALUES(?,?,?)''',(username, password, email))
@@ -220,7 +177,7 @@ def login():
     message_login = ""
     db_username = session.get("username", "Incorrect username or password")
     db_password = session.get("password", "Incorrect username or password")
-    role = request.form.get("role")
+    role = request.form.get("flexRadioDefault")
 
     if role == "admin":
         if username == user_admin:
@@ -246,7 +203,7 @@ def login():
 
 @app.route('/users', methods=['GET', 'POST'])
 def users():
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("users.db")
     cur = conn.cursor()
     cur.execute("SELECT * FROM registration_db")
     records = cur.fetchall()
@@ -264,5 +221,6 @@ def logout():
     message = "You have successfully logged out"
     return render_template("index.html", message_login = message)
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug = True)
