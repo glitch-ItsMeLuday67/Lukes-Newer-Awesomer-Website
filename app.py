@@ -221,6 +221,9 @@ def logout():
     message = "You have successfully logged out"
     return render_template("index.html", message_login = message)
 
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    return render_template("test.html")
 
 if __name__ == "__main__":
     app.run(debug = True)
