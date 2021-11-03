@@ -1,9 +1,15 @@
 from flask import Flask, session, render_template, request, redirect, url_for
+from datetime import datetime
+from database import connect_db, get_db, g
 import sqlite3
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "encrypted_data"
+
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+    return redirect(url_for('index'))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -213,7 +219,7 @@ def users():
     if session.get("admin"):
         return render_template("user_table.html", records = records)
     else:
-        return "You don't have the permission to access this page."
+        return render_template("404pagenotfound.html")
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -224,6 +230,140 @@ def logout():
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     return render_template("test.html")
+
+
+#**FOOD TRACKER APP⬇️**#
+
+
+@app.teardown_appcontext
+def close_db(error):
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
+
+@app.route('/foodtracker/', methods=['POST', 'GET'])
+def foodtracker():
+    db = get_db()
+
+    if request.method == 'POST':
+        date = request.form['date'] #assuming the date is in YYYY-MM-DD format
+        print(date)
+        food_name=request.form['food-select']
+        dt = datetime.strptime(date, '%Y-%m-%d')
+        database_date = datetime.strftime(dt, '%Y%m%d')
+        db.execute('insert into log_date (entry_date) values (?)', [database_date])
+        db.commit()
+
+        cur=db.execute('select id from log_date where entry_date=(?)',[database_date])
+        record=cur.fetchone()
+        db.execute('insert into food_date (food_id, log_date_id) values (?, ?)', [food_name,record[0]])
+        db.commit()
+
+    cur = db.execute('''select log_date.entry_date, sum(food.protein) as protein, sum(food.carbohydrates) as carbohydrates, sum(food.fat) as fat, sum(food.calories) as calories 
+                        from log_date 
+                        join food_date on food_date.log_date_id = log_date.id 
+                        join food on food.id = food_date.food_id 
+                        group by log_date.id order by log_date.entry_date desc''')
+
+    results = cur.fetchall()
+
+    date_results = []
+
+    for i in results:
+        single_date = {}
+
+        single_date['entry_date'] = i['entry_date']
+        single_date['protein'] = i['protein']
+        single_date['carbohydrates'] = i['carbohydrates']
+        single_date['fat'] = i['fat']
+        single_date['calories'] = i['calories']
+
+        d = datetime.strptime(str(i['entry_date']), '%Y%m%d')
+        single_date['pretty_date'] = datetime.strftime(d, '%B %d, %Y')
+
+        date_results.append(single_date)
+
+    food_cur = db.execute('select id, name from food')
+    food_results = food_cur.fetchall()
+
+    return render_template('foodtracker_home.html', results=date_results,food_master_list=food_results)
+
+@app.route('/foodtracker_view/<date>', methods=['GET', 'POST']) #date is going to be 20170520
+def foodtracker_view(date):
+    db = get_db()
+    message=''
+
+    cur = db.execute('select id, entry_date from log_date where entry_date = ?', [date])
+    date_result = cur.fetchone()
+    
+    if request.method == 'POST':
+        print(request.form['food-select'], date_result['id'])
+
+        cur1=db.execute('select * from food_date where food_id=(?) and log_date_id = (?)',[request.form['food-select'], date_result['id']])
+        print(cur1.rowcount)
+        print(cur1.arraysize)
+        record=cur1.fetchone()
+        print(record)
+
+        if record==None:
+            db.execute('insert into food_date (food_id, log_date_id) values (?, ?)', [request.form['food-select'], date_result['id']])
+            db.commit()
+        else:
+            message='Record Already Exists'
+
+    d = datetime.strptime(str(date_result['entry_date']), '%Y%m%d')
+    pretty_date = datetime.strftime(d, '%B %d, %Y')
+
+    food_cur = db.execute('select id, name from food')
+    food_results = food_cur.fetchall()
+
+    log_cur = db.execute('''select food.name, food.protein, food.carbohydrates, food.fat, food.calories 
+                            from log_date 
+                            join food_date on food_date.log_date_id = log_date.id 
+                            join food on food.id = food_date.food_id 
+                            where log_date.entry_date = ?''', [date])
+
+    log_results = log_cur.fetchall()
+
+    totals = {}
+    totals['protein'] = 0
+    totals['carbohydrates'] = 0
+    totals['fat'] = 0
+    totals['calories'] = 0
+
+    for food in log_results:
+        totals['protein'] += food['protein']
+        totals['carbohydrates'] += food['carbohydrates']
+        totals['fat'] += food['fat']
+        totals['calories'] += food['calories']
+
+    return render_template('foodtracker_day.html', entry_date=date_result['entry_date'], pretty_date=pretty_date, \
+                           food_results=food_results, log_results=log_results, totals=totals,message=message)
+
+@app.route('/foodtracker_food', methods=['GET', 'POST'])
+def foodtracker_food():
+    db = get_db()
+
+    if request.method == 'POST':
+        name = request.form['food-name']
+        protein = int(request.form['protein'])
+        carbohydrates = int(request.form['carbohydrates'])
+        fat = int(request.form['fat'])
+
+        calories = protein * 4 + carbohydrates * 4 + fat * 9
+     
+        db.execute('insert into food (name, protein, carbohydrates, fat, calories) values (?, ?, ?, ?, ?)', \
+            [name, protein, carbohydrates, fat, calories])
+        db.commit()
+
+    cur = db.execute('select name, protein, carbohydrates, fat, calories from food')
+    results = cur.fetchall()
+
+    return render_template('foodtracker_add_food.html', results=results)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404pagenotfound.html"), 404
+
 
 if __name__ == "__main__":
     app.run(debug = True)
